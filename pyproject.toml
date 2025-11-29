@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jaxgp"
+version = "0.0.1"
+description = "Gaussian process utilities built on JAX"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [ { name = "Atticus Drex" } ]
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: MIT License",
+	"Intended Audience :: Science/Research",
+]
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
