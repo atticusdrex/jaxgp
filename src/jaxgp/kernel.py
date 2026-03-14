@@ -137,17 +137,9 @@ class Matern32(Kernel):
         # Storing parameter dimension
         self.p_dim = 1 + self.input_dim
 
-    def calibrate(self, X, Y):
+    def calibrate(self, X, Y):        
         """Return a reasonable initial parameter vector from data."""
-        return inv_softplus(
-            self.eps + jnp.concat(
-                (
-                    jnp.var(Y.ravel()).reshape(1),
-                    jnp.var(jnp.diff(Y)) * jnp.ones(self.p_dim - 1),
-                ),
-                axis=0,
-            )
-        )
+        return inv_softplus(self.eps + jnp.concat((jnp.var(Y.ravel()).reshape(1), jnp.var(jnp.diff(Y)) * jnp.ones(self.p_dim-1)), axis=0))
 
     # Evaluation function
     def eval(self, x, y, params):
@@ -162,7 +154,7 @@ class Matern32(Kernel):
         ell = params[1:]
 
         # ARD scaled distance
-        r = jnp.sqrt(jnp.sum((h / ell) ** 2))
+        r = jnp.sqrt(jnp.sum((h / ell) ** 2) + self.eps)
 
         sqrt3_r = jnp.sqrt(3.0) * r
 
