@@ -163,7 +163,7 @@ class Matern32(Kernel):
 
 # ARD-Matern 1/2 kernel
 class Matern12(Kernel):
-    """ARD Matérn 3/2 kernel.
+    """ARD Matérn 1/2 kernel.
 
     Parameterization (params) is expected to be a 1D array where
     params[0] is the signal variance and params[1:] are lengthscales
