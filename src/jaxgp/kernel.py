@@ -159,3 +159,40 @@ class Matern32(Kernel):
         sqrt3_r = jnp.sqrt(3.0) * r
 
         return sigma2 * (1.0 + sqrt3_r) * jnp.exp(-sqrt3_r)
+
+
+# ARD-Matern 1/2 kernel
+class Matern12(Kernel):
+    """ARD Matérn 3/2 kernel.
+
+    Parameterization (params) is expected to be a 1D array where
+    params[0] is the signal variance and params[1:] are lengthscales
+    for each input dimension (positive after softplus).
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Calling super class
+        super().__init__(*args, **kwargs)
+        # Storing parameter dimension
+        self.p_dim = 1 + self.input_dim
+
+    def calibrate(self, X, Y):        
+        """Return a reasonable initial parameter vector from data."""
+        return inv_softplus(self.eps + jnp.concat((jnp.var(Y.ravel()).reshape(1), jnp.var(jnp.diff(Y)) * jnp.ones(self.p_dim-1)), axis=0))
+
+    # Evaluation function
+    def eval(self, x, y, params):
+        """Evaluate Matérn 3/2 kernel k(x,y) given raw `params`."""
+        
+        h = (x - y).ravel()
+
+        # Enforcing positivity
+        params = softplus(params)
+
+        sigma2 = params[0]
+        ell = params[1:]
+
+        # ARD scaled distance
+        r = jnp.sqrt(jnp.sum((h / ell) ** 2) + self.eps)
+
+        return sigma2 * jnp.exp(-r)
